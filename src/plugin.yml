@@ -1,0 +1,41 @@
+name: RandomBox
+description: Коробки удачи в Minecraft!
+main: saharnooby.randombox.RandomBox
+version: 1.1
+author: saharNooby
+commands:
+  randombox:
+    description: Основная команда плагина.
+    usage: '§3[RandomBox] §bИспользуйте §6/randombox <reload>'
+    aliases: [rb]
+  givebox:
+    description: Выдать коробку удачи игроку.
+    usage: '§3[RandomBox] §bИспользуйте §6/givebox <игрок> <id коробки>'
+  openbox:
+    description: Открыть коробку, которая нходится у вас в руках.
+    usage: '§3[RandomBox] §bИспользуйте §6/openbox'
+permissions:
+  randombox.*:
+    description: Разрешает выполнять все команды.
+    default: op
+    children:
+      randombox.main: true
+      randombox.main.reload: true
+      randombox.openbox: true
+      randombox.givebox: true
+      randombox.infinitebox: true
+  randombox.main:
+    description: Разрешает выполнять команду /randombox (выводит версию).
+    default: op
+  randombox.main.reload:
+    description: Разрешает перезагружать плагин.
+    default: op
+  randombox.openbox:
+    description: Разрешает открывать коробки.
+    default: true
+  randombox.givebox:
+    description: Разрешает выдавать коробки игрокам.
+    default: op
+  randombox.infinitebox:
+    description: При открытии коробка не исчезает.
+    default: op
