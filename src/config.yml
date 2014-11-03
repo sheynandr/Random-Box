@@ -27,11 +27,13 @@ boxes:
     # или строковый (для предыдущего — "DIAMOND_BLOCK").
     boxItem: STORAGE_MINECART
     # Название коробки
-    boxName: Коробка бойца
+    boxName: 'Коробка бойца'
     # Сколько вещей выпадает из коробки
     itemsToSelectCount: 3
     # Проверять наличие у открывающего разрешения randombox.open.<id коробки>
     checkPermission: false
+    # Открывать коробку при клике правой кнопки мыши во время держания её в руках
+    openWhenClicked: false
     # Вещи, которые могут выпасть при открытии коробки
     items:
       # Любое название, не влияет ни на что
@@ -45,13 +47,13 @@ boxes:
         # Название предмета (может быть цветным)
         # Обязательный параметр! Иначе не будет имени предмета
         # в описании к коробке.
-        name: §cАлмазный меч
+        name: '&cАлмазный меч'
         # Описание предмета
         # Каждая строчка — отдельный пункт
         # - 'текст строки'
         lore:
-        - §7Этот меч выпал
-        - §7из коробки удачи.
+        - '&7Этот меч выпал'
+        - '&7из коробки удачи.'
         # Зачарования любого уровня и типа
         # Формат: <Зачарование>:<уровень>
         enchants:
@@ -64,7 +66,7 @@ boxes:
       item2:
         item: IRON_SWORD
         amount: 1
-        name: §6Железный меч
+        name: '&6Железный меч'
         enchants:
           sharpness: 5
           unbreaking: 3
@@ -73,7 +75,7 @@ boxes:
       item3:
         item: STONE_SWORD
         amount: 1
-        name: §eКаменный меч
+        name: '&eКаменный меч'
         enchants:
           sharpness: 3
           unbreaking: 3
@@ -82,7 +84,7 @@ boxes:
       item4:
         item: BOW
         amount: 1
-        name: §eЛук
+        name: '&eЛук'
         enchants:
           power: 3
           unbreaking: 3
@@ -90,53 +92,50 @@ boxes:
         chance: 95
       item5:
         item: GOLDEN_APPLE
-        name: §rЗолотое яблоко
+        name: '&rЗолотое яблоко'
         amount: 4
         chance: 155
       item6:
         item: ARROW
-        name: §rСтрела
+        name: '&rСтрела'
         amount: 16
         chance: 185
       item7:
         item: BONE
-        name: §rКость
+        name: '&rКость'
         amount: 8
         chance: 215
       item8:
         item: ROTTEN_FLESH
-        name: §rЗомбятинка
+        name: '&rЗомбятинка'
         amount: 6
         chance: 235
 # - - - - - - - - - - - - - - - - - - - - -
 # Строки, которые выводятся в чат.
 # Для добавления цвета используйте
-# символ § (& не работает!)
+# символы &<код цвета>
 # - - - - - - - - - - - - - - - - - - - - -
 strings:
   itemsToDrop: 'Выпадающие предметы:'
-
+  # - - - - - - - - - - - - - - - - - - - - -
   # Префикс сообщений.
-  prefix: §3[RandomBox] §b
-
+  prefix: '&3[RandomBox] &b'
+  # - - - - - - - - - - - - - - - - - - - - -
   # Сообщения от плагина.
-  configReloaded: Настройки перезагружены.
-  configResetted: Настройки сброшены.
-  boxGiven: Коробка успешно выдана.
+  configReloaded: 'Настройки перезагружены.'
+  boxGiven: 'Коробка успешно выдана.'
   itemsDropped: 'Вам выпали: '
-
+  # - - - - - - - - - - - - - - - - - - - - -
   # Ошибки, выводимые в чат.
-  noPermissions: У вас нет прав для выполнения этой команды.
-  boxOpenError: 'Произошла ошибка при открытии коробки:'
-  boxGiveError: 'Произошла ошибка при выдаче коробки:'
-
+  noPermissions: 'У вас нет прав для выполнения этой команды.'
+  boxOpenError: 'Произошла ошибка при открытии коробки'
+  boxGiveError: 'Произошла ошибка при выдаче коробки'
+  # - - - - - - - - - - - - - - - - - - - - -
   # Подробные описания ошибок.
-  notAPlayer: вы не игрок! (WTF?!).
-  playerNotFound: игрок не найден.
-  itemIsNotABox: вы должны держать в руках коробку.
-  noSuchBox: в config.yml нет коробки с таким id.
-  noPermissionsToOpen: у вас нет прав для открытия этой коробки.
-  itemsParsingError: невозможно распарсить настройки вещей в config.yml.
-  itemsCountMissing: в config.yml нет параметра itemsToSelectCount или он меньше 1.
-  notEnoughSpace: недостаточно места в инвентаре.
-  boxParsingError: не удалось распарсить настройки коробки.
+  notAPlayer: 'вы не игрок! (WTF?!).'
+  playerNotFound: 'игрок не найден.'
+  itemIsNotABox: 'вы должны держать в руках коробку.'
+  noSuchBox: 'в config.yml нет коробки с таким id.'
+  noPermissionsToOpen: 'у вас нет прав для открытия этой коробки.'
+  notEnoughSpace: 'недостаточно места в инвентаре.'
+  boxParsingError: 'не удалось распарсить настройки коробки.'

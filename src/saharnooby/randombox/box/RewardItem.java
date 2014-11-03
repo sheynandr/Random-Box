@@ -3,39 +3,12 @@ package saharnooby.randombox.box;
 import java.util.List;
 
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
-import saharnooby.randombox.ItemConverter;
 import saharnooby.randombox.RandomBox;
+import saharnooby.randombox.Utils;
 
 public class RewardItem {
-	private ItemStack item = null;
-	
-	private int chance = 0;
-	
-	public RewardItem(ConfigurationSection section) {
-		if (section == null) return;
-		
-		int _chance = section.getInt("chance", 0);
-		if (_chance < 1) return; else chance = _chance;
-	
-		ItemStack _item = ItemConverter.section2item(section);
-		if (_item == null) return; else item = _item;
-	}
-	
-	public ItemStack getItem() {
-		return item;	
-	}
-	
-	public int getChance() {
-		return chance;
-	}
-	
-	public Boolean isValid() {
-		return (item != null) && (chance > 0);
-	}
-	
 	private static void swapItems(List<RewardItem> list, int i, int j) {
 		RewardItem item = list.get(i);
 		list.set(i, list.get(j));
@@ -45,9 +18,42 @@ public class RewardItem {
 	public static void sortByChance(List<RewardItem> itemsList){
 	    for (int i = itemsList.size() - 1; i >= 0; i--) {
 	        for (int j = 0; j < i; j++) {
-	            if(itemsList.get(i).getChance() < itemsList.get(j).getChance())
+	            if(itemsList.get(i).getProbability() < itemsList.get(j).getProbability())
 	            	swapItems(itemsList, j, j + 1);
 	        }
 	    }
+	}
+	
+	public static RewardItem fromSection(ConfigurationSection section) {
+		if (section == null)
+			return null;
+		
+		RewardItem rewardItem = new RewardItem();
+		
+		ItemStack item = Utils.section2item(section);
+		if (item == null)
+			return null;
+		else
+			rewardItem.item = item;
+		
+		int probability = section.getInt("chance", 0);
+		if (probability < 1)
+			return null;
+		else
+			rewardItem.probability = probability;
+		
+		return rewardItem;		
+	}
+	
+	private ItemStack item;
+	
+	private int probability;
+	
+	public ItemStack getItem() {
+		return item;
+	}
+	
+	public int getProbability() {
+		return probability;
 	}
 }
