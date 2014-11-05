@@ -2,6 +2,7 @@ package saharnooby.randombox;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -125,12 +126,23 @@ public class Utils {
 		
 		String name = section.getString("boxName");
 		if (name != null) {
+			name = "§r" + name.replace("&", "§").replace("§§", "&");
+			
+			if (section.getBoolean("unstackable", true)) {
+				String randomString = "";			
+				Random random = new Random();
+				for (int i = 1; i <= 4; i++) 
+					randomString += "§" + random.nextInt(10);
+				name = randomString + name;
+			}
+			
 			ItemMeta meta = Bukkit.getItemFactory().getItemMeta(material);
-			meta.setDisplayName("§r" + name.replace("&", "§").replace("§§", "&"));
+			meta.setDisplayName(name);
 			item.setItemMeta(meta);
 		}		
 		
-		item.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 3);
+		if (section.getBoolean("enchant", true))
+			item.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 3);			
 		
 		return item;
 	}
@@ -140,8 +152,8 @@ public class Utils {
 		if (boxMeta == null)
 			boxMeta = Bukkit.getItemFactory().getItemMeta(box.getItem().getType());
 		
-		List<String> lore = new ArrayList<String>();
-		lore.add("§8" + box.getId());
+		List<String> lore = new ArrayList<String>();		
+
 		lore.add("§r" + RandomBox.getString("itemsToDrop"));
 		
 		for (RewardItem item : box.getItems()) {
@@ -151,7 +163,7 @@ public class Utils {
 				if (name != null) {
 					int amount = item.getItem().getAmount();
 					if (amount > 0) {
-						lore.add(String.format("§7%d.§e x%d %s", lore.size() - 1, amount, name));
+						lore.add(String.format("§7%d.§e x%d %s", lore.size(), amount, name));
 					}
 				}
 			}

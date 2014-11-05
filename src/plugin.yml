@@ -1,7 +1,7 @@
 name: RandomBox
 description: Коробки удачи в Minecraft!
 main: saharnooby.randombox.RandomBox
-version: 1.3
+version: 1.4
 author: saharNooby
 commands:
   randombox:

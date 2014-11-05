@@ -83,6 +83,12 @@ public class CommandHandler {
 		else if (!player.isOnline())
 			return result.fail(true, "playerNotFound");	
 
+		try {
+			short id = Short.valueOf(args[1]);
+		} catch (Exception e) {
+			return result.fail(true, "idMustBeNumerical");
+		}
+		
 		ConfigurationSection section = RandomBox.getConfiguration().getConfigurationSection("boxes." + args[1]);
 		if (section == null)
 			return result.fail(true, "noSuchBox");	

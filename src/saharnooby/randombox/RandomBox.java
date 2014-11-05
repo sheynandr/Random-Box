@@ -11,6 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -103,7 +105,7 @@ public class RandomBox extends JavaPlugin implements Listener {
 				}
 				
 				this.reloadConfig();
-				config = getConfig();
+				load();
 				
 				chatInfo(sender, getString("configReloaded"));
 				
@@ -147,6 +149,21 @@ public class RandomBox extends JavaPlugin implements Listener {
 
 		return false;
 	}	
+	
+	//@EventHandler
+	//public void onInventoryClick(InventoryClickEvent event) {
+		// Попытка динамического создания lore... 
+		/* debugInfo("onInventoryClick");
+		InventoryAction action = event.getAction();
+		if (action == InventoryAction)
+		
+		Box box = Box.fromItemStack(event.get .getCurrentItem());
+		if (box == null) {
+			debugInfo("Item is not a box.");
+		} else {
+			event.setCurrentItem(box.getItem());
+		} */		
+	//}
 	
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {

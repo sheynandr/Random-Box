@@ -14,20 +14,31 @@ import saharnooby.randombox.RandomBox;
 import saharnooby.randombox.Utils;
 
 public class Box {
-	public static Box fromItemStack(ItemStack item) {
+	public static Box fromItemStack(ItemStack item) {		
 		if (item == null) return null;
 		
-		ItemMeta meta = item.getItemMeta();
-		if (meta == null) return null;
+		int intId = item.getDurability();
 		
-		List<String> lore = meta.getLore();
-		if (lore == null) return null;
+		// Получаем строковый id коробки из под-id вещи
+		String id = String.valueOf(intId);
 		
-		if (lore.isEmpty()) return null;
+		ConfigurationSection section;
+		section = RandomBox.getConfiguration().getConfigurationSection("boxes." + id);
 		
-		String id = lore.get(0).substring(2);
+		// Если секция с таким id не найдена, выходим...
+		if (section == null)
+			return null;
 		
-		return fromSection(RandomBox.getConfiguration().getConfigurationSection("boxes." + id));
+		// Создаём коробку, которая распарсена из секции (будет эталоном)
+		ItemStack box = Utils.section2box(section);
+		if (box == null)
+			return null;
+		
+		// Если материалы эталонной и данной коробки не совпадают, то выходим
+		if (item.getType() != box.getType())
+			return null;
+		
+		return fromSection(section);
 	}
 	
 	public static Box fromSection(ConfigurationSection section) {
@@ -36,7 +47,11 @@ public class Box {
 		
 		Box box = new Box();
 		
-		box.id = section.getName();
+		try {
+			box.id = Short.valueOf(section.getName());
+		} catch (Exception e) {
+			return null;
+		};
 		
 		ItemStack item = Utils.section2box(section);
 		if (item == null)
@@ -53,6 +68,10 @@ public class Box {
 		box.checkPermission = section.getBoolean("checkPermission", false);
 		
 		box.openWhenClicked = section.getBoolean("openWhenClicked", false);
+		
+		box.enchant = section.getBoolean("enchant", true);
+		
+		box.unstackable = section.getBoolean("unstackable", true);
 		
 		ConfigurationSection itemsSection = section.getConfigurationSection("items");
 		if (itemsSection != null) {
@@ -74,12 +93,14 @@ public class Box {
 		} else
 			return null;
 		
+		box.item.setDurability(box.id);
+		
 		Utils.fillBoxLore(box);
 		
 		return box;
 	}
 	
-	private String id;
+	private short id;
 	
 	private ItemStack item;
 	
@@ -89,9 +110,13 @@ public class Box {
 	
 	private Boolean openWhenClicked;
 	
+	private Boolean enchant;
+	
+	private Boolean unstackable;
+	
 	private List<RewardItem> items;
 
-	public String getId() {
+	public short getId() {
 		return id;
 	}
 
@@ -109,6 +134,14 @@ public class Box {
 
 	public Boolean getOpenWhenClicked() {
 		return openWhenClicked;
+	}
+	
+	public Boolean getEnchant() {
+		return enchant;
+	}
+	
+	public Boolean getUnstackable() {
+		return unstackable;
 	}
 
 	public List<RewardItem> getItems() {
@@ -132,7 +165,7 @@ public class Box {
 		// Пока счётчик вещей, которых нужно взять, больше нуля, делаем
 		// этот огромный блок
 		while (count > 0) {
-			RandomBox.debugInfo("----- ITERATION -----");
+			RandomBox.debugInfo("----- ITERATION ------");
 			
 			// Узнаём сумму всех вероятностей
 			float chanceSum = 0;
@@ -153,34 +186,33 @@ public class Box {
 			
 			RandomBox.debugInfo("Size: " + Integer.toString(items.size()));
 			
-			// Сортируем шансы по убыванию
-			Collections.sort(percents);
-			RewardItem.sortByChance(items);
-			
 			Random random = new Random();
 			// Определяем случайное целое число от 0 до суммы шансов + 1 включительно
-			float randInt = random.nextInt(100) + random.nextFloat(); // from 0 to 100 inclusive.
+			float rand = random.nextInt(100) + random.nextFloat(); // from 0 to 100 inclusive.
 			
-			RandomBox.debugInfo("Random number: " + Float.toString(randInt));
+			RandomBox.debugInfo("Random number: " + rand);
 			
 			// Номер текущего элемента массива % вероятностей
 			int i = 0;
-			// Перебираем все проценты, пока не найдём такой, который будет
-			// попадать в промежуток от предыдущего процента до текущего.
-			// Например, если есть 2 шанса 60% и 40%, то больше вероятности,
-			// что случайное число будет в промежутке от 0 до 60.
+			
+			float from = 0;
+
 			while (i < percents.size() - 1) {				
 				float percent = percents.get(i);
-				float prevPercent = (i > 0) ? percents.get(i - 1) : 0; 
+				from = (i > 0) ? from + percents.get(i - 1) : 0;  
+
+				//float to = useNewSelector ? from + percent : percent;	
+				float to = from + percent;	
+
+				RandomBox.debugInfo("Checking: ( " + from + " ; " + to + " ]");
 				
-				RandomBox.debugInfo("Checking: ( " + Float.toString(prevPercent) + " ; " + Float.toString(percent) + " ]");
-				
-				if ((randInt > prevPercent) && (randInt <= percent)) break;
+				if ((rand > from) && (rand <= to)) {
+					RandomBox.debugInfo(rand + " is in ( " + from + " ; " + to + " ], i = " + i);
+					break;
+				}
 				
 				i++;
 			}
-			
-			RandomBox.debugInfo("i: " + Integer.toString(i));
 			
 			// Добавляем выпавшую вещь из данного списка в результат
 			resultItems.add(items.get(i));
@@ -193,6 +225,8 @@ public class Box {
 			count--;
 			
 			total--;
+			
+			RandomBox.debugInfo("-- END OF ITERATION --");
 		}
 		
 		return resultItems;
