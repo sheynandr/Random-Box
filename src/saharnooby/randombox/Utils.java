@@ -47,9 +47,55 @@ public class Utils {
 		return Enchantment.getByName(enchId);
 	}
 	
+	public static int getIdFromLoreLine(String line) {
+		// &1&2&3&4&rSome string
+		
+		int rIndex = line.indexOf("§r");
+		if (rIndex <= 0)
+			return -1;
+		
+		line = line.substring(0, rIndex);
+		
+		// &1&2&3&4
+		
+		String[] digits = line.split("§");
+		if (digits.length == 0)
+			return -1;
+		
+		// {1, 2, 3, 4}
+		
+		String id = "";
+		
+		for (int i = 0; i < digits.length; i++) {
+			id = id.concat(digits[i]);
+		}
+		
+		// 1234
+		
+		try {
+			return Integer.valueOf(id);
+		} catch (Exception e) {
+			return -1;
+		}
+	}
+	
+	private static String getIdFromIntId(int id) {
+		// 1234
+		String rawId = String.valueOf(id);
+		String stringId = "";
+		
+		// {1, 2, 3, 4}
+		for (char c : rawId.toCharArray()) {
+			stringId = stringId.concat("§" + c);
+		}
+		
+		// §1§2§3§4
+		return stringId;
+	}
+	
 	private static Material getMaterial(ConfigurationSection section, String path) {
-		int materialId = section.getInt(path, -1); 		
-		String materialName = section.getString(path);		
+		int materialId = section.getInt(path, -1);
+		String materialName = section.getString(path);
 		
 		Material material;
 		
@@ -72,6 +118,9 @@ public class Utils {
 	public static ItemStack section2item(ConfigurationSection section) {
 		Material material = getMaterial(section, "item");
 		if (material == null)
+			return null;
+		
+		if (material == Material.AIR)
 			return null;
 		
 		int amount = section.getInt("amount", 1);
@@ -120,29 +169,31 @@ public class Utils {
 	public static ItemStack section2box(ConfigurationSection section) {
 		Material material = getMaterial(section, "boxItem");
 		if (material == null)
-			return null;		
+			return null;
 		
 		ItemStack item = new ItemStack(material, 1);
-		
+
 		String name = section.getString("boxName");
 		if (name != null) {
 			name = "§r" + name.replace("&", "§").replace("§§", "&");
 			
 			if (section.getBoolean("unstackable", true)) {
-				String randomString = "";			
+				String randomString = "";
 				Random random = new Random();
 				for (int i = 1; i <= 4; i++) 
 					randomString += "§" + random.nextInt(10);
 				name = randomString + name;
 			}
-			
+
 			ItemMeta meta = Bukkit.getItemFactory().getItemMeta(material);
 			meta.setDisplayName(name);
 			item.setItemMeta(meta);
-		}		
+		}
 		
-		if (section.getBoolean("enchant", true))
-			item.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 3);			
+		Enchantment boxEnchantment = getEnchantment(RandomBox.getConfiguration().getString("boxEnchantment"));
+		
+		if (boxEnchantment != null && section.getBoolean("enchant", true))
+			item.addUnsafeEnchantment(boxEnchantment, 1);
 		
 		return item;
 	}
@@ -152,21 +203,22 @@ public class Utils {
 		if (boxMeta == null)
 			boxMeta = Bukkit.getItemFactory().getItemMeta(box.getItem().getType());
 		
-		List<String> lore = new ArrayList<String>();		
+		List<String> lore = new ArrayList<String>();
 
-		lore.add("§r" + RandomBox.getString("itemsToDrop"));
+		lore.add(Utils.getIdFromIntId(box.getId()) + "§r" + RandomBox.getString("itemsToDrop"));
 		
 		for (RewardItem item : box.getItems()) {
-			ItemMeta meta = item.getItem().getItemMeta();
-			if (meta != null) {
-				String name = meta.getDisplayName();
-				if (name != null) {
-					int amount = item.getItem().getAmount();
-					if (amount > 0) {
-						lore.add(String.format("§7%d.§e x%d %s", lore.size(), amount, name));
-					}
-				}
-			}
+			String name = item.getName();
+			String loreString;
+			
+			if (item.getItem() == null) {
+				loreString = String.format("§7%d.§e %s", lore.size(), name);
+			} else {
+				int amount = item.getItem().getAmount();
+				loreString = String.format("§7%d.§e x%d %s", lore.size(), amount, name);
+			};
+			
+			lore.add(loreString);
 		}
 		
 		boxMeta.setLore(lore);
@@ -177,22 +229,15 @@ public class Utils {
 		String result = "";
 		
 		for (RewardItem item : list) {
-			ItemMeta meta = item.getItem().getItemMeta();
-			if (meta != null) {
-				String name = meta.getDisplayName();
-				if (name != null) {
-					int amount = item.getItem().getAmount();
-					if (amount > 0) {
-						if (result.isEmpty())
-							result += name + " §rx" + Integer.toString(amount);
-						else
-							result += ", " + name + " §rx" + Integer.toString(amount);
-					}
-				}
-			}
-						
+			String name = item.getName();
+			int amount = (item.getItem() == null) ? 0 : item.getItem().getAmount();
+			
+			if (amount == 0) 
+				result += ", " + name + "§r";
+			else
+				result += ", " + name + " §rx" + Integer.toString(amount);						
 		}
 		
-		return result;
+		return result.substring(2, result.length());
 	}
 }

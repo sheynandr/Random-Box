@@ -11,22 +11,27 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import saharnooby.randombox.box.Box;
+import saharnooby.randombox.box.RewardCommand;
 import saharnooby.randombox.box.RewardItem;
+import saharnooby.randombox.box.result.BoxConstructorResult;
 
 public class CommandHandler {
 	public static CommandResult openBox(CommandSender sender) {
-		CommandResult result = new CommandResult(); 	
+		CommandResult result = new CommandResult();
 		
-		Player player;		
+		Player player;
 		if (sender instanceof Player) {
-			player = (Player) sender; 	
+			player = (Player) sender;
 		} else {
 			return result.fail(true, "notAPlayer");
 		}
+
+		BoxConstructorResult boxResult = Box.fromItemStack(player.getItemInHand());
 		
-		Box box = Box.fromItemStack(player.getItemInHand());
-		if (box == null)
-			return result.fail(true, "itemIsNotABox");
+		if (!boxResult.getSuccessful())
+			return result.fail(true, boxResult.getMessage());
+
+		Box box = boxResult.getResult();
 		
 		if (
 				box.getCheckPermission() &&
@@ -54,7 +59,7 @@ public class CommandHandler {
 		if (freeCount < box.getItemsToSelectCount())
 			return result.fail(true, "notEnoughSpace");
 		
-		// Удаляем коробочку!		
+		// Удаляем коробочку!
 		if (!sender.hasPermission("randombox.infinitebox")) {
 			ItemStack item = player.getItemInHand();
 			
@@ -67,7 +72,19 @@ public class CommandHandler {
 		List<RewardItem> rewardItems = box.getRandomItems();
 		
 		for (RewardItem item : rewardItems) {
-			inventory.addItem(item.getItem());
+			ItemStack itemStack = item.getItem();
+			if (itemStack != null)
+				inventory.addItem(itemStack);
+			
+			// Выполняем команды, если есть
+			if (item.getCommands() != null) for (RewardCommand command : item.getCommands()) {
+				String line = command.getLine().replace("%player%", sender.getName());
+				Boolean fromConsole = command.getFromConsole();
+				CommandSender commandSender = fromConsole ? Bukkit.getConsoleSender() : sender;
+				
+				RandomBox.debugInfo("Dispatching '" + line + "', fromConsole = " + fromConsole);
+				Bukkit.dispatchCommand(commandSender, line);
+			}
 		}
 		
 		return result.successful(false, Utils.getFlatItemsList(rewardItems));
@@ -79,9 +96,9 @@ public class CommandHandler {
 		Player player = Bukkit.getPlayer(args[0]);
 		
 		if (player == null)
-			return result.fail(true, "playerNotFound");	
+			return result.fail(true, "playerNotFound");
 		else if (!player.isOnline())
-			return result.fail(true, "playerNotFound");	
+			return result.fail(true, "playerNotFound");
 
 		try {
 			short id = Short.valueOf(args[1]);
@@ -93,10 +110,13 @@ public class CommandHandler {
 		if (section == null)
 			return result.fail(true, "noSuchBox");	
 		
-		Box box = Box.fromSection(section);
-		if (box == null)
-			return result.fail(true, "boxParsingError");	
-
+		BoxConstructorResult boxResult = Box.fromSection(section);
+		
+		if (!boxResult.getSuccessful())
+			return result.fail(true, boxResult.getMessage());	
+		
+		Box box = boxResult.getResult();
+		
 		int slot = player.getInventory().firstEmpty();
 		if (slot == -1)
 			return result.fail(true, "notEnoughSpace");	

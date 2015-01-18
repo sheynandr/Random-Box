@@ -1,22 +1,23 @@
 name: RandomBox
-description: Коробки удачи в Minecraft!
+description: Random boxes in Minecraft!
+website: 'dev.bukkit.org/bukkit-plugins/random_box/'
 main: saharnooby.randombox.RandomBox
-version: 1.4
+version: 1.7
 author: saharNooby
 commands:
   randombox:
-    description: Основная команда плагина.
-    usage: '§3[RandomBox] §bИспользуйте §6/randombox <reload>'
+    description: Main plugin command.
+    usage: '§3[§bRandomBox§3] §6Use /randombox <reload>'
     aliases: [rb]
   givebox:
-    description: Выдать коробку удачи игроку.
-    usage: '§3[RandomBox] §bИспользуйте §6/givebox <игрок> <id коробки>'
+    description: Give the box to player.
+    usage: '§3[§bRandomBox§3] §6Use /givebox <player> <box id>'
   openbox:
-    description: Открыть коробку, которая нходится у вас в руках.
-    usage: '§3[RandomBox] §bИспользуйте §6/openbox'
+    description: Open box that is in you hand.
+    usage: '§3[§bRandomBox§3] §6bUse /openbox'
 permissions:
   randombox.*:
-    description: Разрешает выполнять все команды.
+    description: Allows you to do everything.
     default: op
     children:
       randombox.main: true
@@ -26,17 +27,17 @@ permissions:
       randombox.infinitebox: true
       randombox.open.*: true
   randombox.main:
-    description: Разрешает выполнять команду /randombox (выводит версию).
+    description: Allows you to use /randombox command.
     default: op
   randombox.main.reload:
-    description: Разрешает перезагружать плагин.
+    description: Allows you to reload plugin config.
     default: op
   randombox.openbox:
-    description: Разрешает открывать коробки.
+    description: Allows you to open boxes.
     default: true
   randombox.givebox:
-    description: Разрешает выдавать коробки игрокам.
+    description: Allows you to give boxes.
     default: op
   randombox.infinitebox:
-    description: При открытии коробка не исчезает.
+    description: The box will not dissapear after opening.
     default: op

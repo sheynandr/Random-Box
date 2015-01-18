@@ -1,78 +1,88 @@
 # - - - - - - - - - - - - - - - - - - - - -
-# Файл конфигурации для плагина RandomBox
-# Автор плагина: saharNooby
+# Описание и настройка плагина на русском:
+# rubukkit.org/threads/.83608/
 # - - - - - - - - - - - - - - - - - - - - -
-# Формат файла — YAML
-# Для проверки правильности используйте
+# Configuration file for RandomBox
+# Plugin author: saharNooby
+# - - - - - - - - - - - - - - - - - - - - -
+# File format is YAML
+# To check is file correct use
 # http://yaml-online-parser.appspot.com/
-# Если что-то пошло не так, то вы всегда
-# можете удалить конфиг.
+# If you want reset settings,
+# you can delete this file.
 # - - - - - - - - - - - - - - - - - - - - -
-# Режим debug включает вывод в консоль
-# некоторого дерьма типа процентных
-# соотношений.
+# If this parameter is true, in the console
+# will print messages, like calculated
+# probabilities.
 # - - - - - - - - - - - - - - - - - - - - -
 debug: false
 # - - - - - - - - - - - - - - - - - - - - -
-# Все коробки, доступные игрокам
+# Use metrics. Site: http://mcstats.org
+# - - - - - - - - - - - - - - - - - - - - -
+metrics: true
+# - - - - - - - - - - - - - - - - - - - - -
+# - - - - - - - - - - - - - - - - - - - - -
+boxEnchantment: protection
+# - - - - - - - - - - - - - - - - - - - - -
+# All boxes that available
 # - - - - - - - - - - - - - - - - - - - - -
 boxes:
-  # Идентификатор коробки (указывается в команде /givebox <игрок> <id>)
-  # Должен быть целым положительным числом,
-  # желательно, в формате 990<номер по порядку> во избежание пересечения под-id с обычными предметами.
+  # Box id, must be a integer.
+  # Please, use large numbers
+  # to id does not intersect
+  # with the standard data values.
   9901:
-    # Вещь, которой является коробка, желательно, нестакающаяся.
-    # Лучше всего подходит вагонетка с сундуком (STORAGE_MINECART).
-    # Если эту вещь можно использовать (вагонетку, например, поставить на рельсы),
-    # то это нельзя будет сделать, если эта вещь — коробка.
-    # Формат указания: цифровой id (например, "57" — алмазный блок)
-    # или строковый (для предыдущего — "DIAMOND_BLOCK").
+    # Item that represents a box.
+    # Recommended item is STORAGE_MINECART.
+    # If that item can be used (for example, minecart can be placed on rails),
+    # then you can't use it, if item is a box.
+    # You can use numeric or string id.
     boxItem: STORAGE_MINECART
-    # Название коробки
-    boxName: '&6Коробка бойца'
-    # Сколько вещей выпадает из коробки
+    # Box name, can be colored with &<color code>
+    boxName: '&6Warrior box'
+    # Drop items amount
     itemsToSelectCount: 3
-    # Проверять наличие у открывающего разрешения randombox.open.<id коробки>
+    # Check for permission randombox.open.<box id>
     checkPermission: false
-    # Открывать коробку при клике правой кнопки мыши во время держания её в руках
+    # Should box open, if player right-clicked on it?
     openWhenClicked: true
-    # Зачаровывать коробку на Защиту III?
+    # Enchant box?
     enchant: true
-    # Делает коробки нестакающимися (если это стакающиеся предметы или блоки)
+    # Box can't stack (if box item can stack by default)
     unstackable: true
-    # Вещи, которые могут выпасть при открытии коробки
+    # Items that can drop
     items:
-      # Любое название, не влияет ни на что
+      # Some name
       item1:
-        # id предмета
+        # Item id (numeric or string)
         item: DIAMOND_SWORD
-        # Data value предмета (то, которое через двоеточие)
+        # Data value
         data: 0
-        # Количество предметов в стаке
+        # Item amount
         amount: 1
-        # Название предмета (может быть цветным)
-        # Обязательный параметр! Иначе не будет имени предмета
-        # в описании к коробке.
-        name: '&cАлмазный меч'
-        # Описание предмета
-        # Каждая строчка — отдельный пункт
-        # - 'текст строки'
+        # Item name, can be colored with &<color code>
+        # If there is no "name" parameter,
+        # item will not added to list in box lore.
+        name: '&cDiamond sword'
+        # Item lore, can be colored with &<color code>
+        # Format: every list item - 'item'
+        # is another line.
         lore:
-        - '&7Этот меч выпал'
-        - '&7из коробки удачи.'
-        # Зачарования любого уровня и типа
-        # Формат: <Зачарование>:<уровень>
+        - '&7This sword dropped'
+        - '&7from a box.'
+        # Enchants on item.
+        # Format: <ench name>:<any level>
         enchants:
           sharpness: 8
           unbreaking: 5
           fire: 4
           knockback: 2
-        # Шанс выпадения вещи (пересчитывается в процентах по формуле <шанс> / <сумма шансов всех вещей> * 100%)
+        # Probability of drop
         chance: 2
       item2:
         item: IRON_SWORD
         amount: 1
-        name: '&6Железный меч'
+        name: '&6Iron sword'
         enchants:
           sharpness: 5
           unbreaking: 3
@@ -81,7 +91,7 @@ boxes:
       item3:
         item: STONE_SWORD
         amount: 1
-        name: '&eКаменный меч'
+        name: '&eStone sword'
         enchants:
           sharpness: 3
           unbreaking: 3
@@ -90,7 +100,7 @@ boxes:
       item4:
         item: BOW
         amount: 1
-        name: '&eЛук'
+        name: '&eBow'
         enchants:
           power: 3
           unbreaking: 3
@@ -98,51 +108,146 @@ boxes:
         chance: 6
       item5:
         item: GOLDEN_APPLE
-        name: '&rЗолотое яблоко'
+        name: '&rGolden apple'
         amount: 4
         chance: 8
       item6:
-        item: ARROW
-        name: '&rСтрела'
-        amount: 16
+        # If this section is presented,
+        # when this item drop will be
+        # executed specified commands.
+        #
+        # In this case, player will get
+        # 10 levels.
+        # If you want only execute
+        # commands (without giving item),
+        # set item id to 'AIR' or 0.
+        commands:
+          # Some name
+          command1:
+            # Command name without '/'
+            # and arguments.
+            # %player% will be replaced
+            # with player name.
+            line: 'xp give %player% 10L'
+            # Execute command
+            # from console or player
+            fromConsole: true
+        item: AIR
+        name: '&rExp (10 lvl)'
+        amount: 1
         chance: 30
       item7:
-        item: BONE
-        name: '&rКость'
-        amount: 8
+        commands:
+          command1:
+            line: 'xp give %player% 6L'
+            fromConsole: true
+        item: AIR
+        name: '&rExp (6 lvl)'
+        amount: 1
         chance: 35
       item8:
-        item: ROTTEN_FLESH
-        name: '&rЗомбятинка'
-        amount: 6
+        commands:
+          command1:
+            line: 'xp give %player% 3L'
+            fromConsole: true
+        item: AIR
+        name: '&rExp (3 lvl)'
+        amount: 1
         chance: 45
 # - - - - - - - - - - - - - - - - - - - - -
-# Строки, которые выводятся в чат.
-# Для добавления цвета используйте
-# символы &<код цвета>
+# Name of section with strings. You can
+# add you own section and set "locale"
+# parameter to it's name.
 # - - - - - - - - - - - - - - - - - - - - -
+# Default locales:
+# en (English), ru (Русский)
+# - - - - - - - - - - - - - - - - - - - - -
+locale: en
 strings:
-  itemsToDrop: 'Выпадающие предметы:'
-  # - - - - - - - - - - - - - - - - - - - - -
-  # Префикс сообщений.
-  prefix: '&3[RandomBox] &b'
-  # - - - - - - - - - - - - - - - - - - - - -
-  # Сообщения от плагина.
-  configReloaded: 'Настройки перезагружены.'
-  boxGiven: 'Коробка успешно выдана.'
-  itemsDropped: 'Вам выпали: '
-  # - - - - - - - - - - - - - - - - - - - - -
-  # Ошибки, выводимые в чат.
-  noPermissions: 'У вас нет прав для выполнения этой команды.'
-  boxOpenError: 'Произошла ошибка при открытии коробки'
-  boxGiveError: 'Произошла ошибка при выдаче коробки'
-  # - - - - - - - - - - - - - - - - - - - - -
-  # Подробные описания ошибок.
-  notAPlayer: 'вы не игрок! (WTF?!).'
-  playerNotFound: 'игрок не найден.'
-  itemIsNotABox: 'вы должны держать в руках коробку.'
-  idMustBeNumerical: 'идентификатор коробки должен быть числом.'
-  noSuchBox: 'в config.yml нет коробки с таким id.'
-  noPermissionsToOpen: 'у вас нет прав для открытия этой коробки.'
-  notEnoughSpace: 'недостаточно места в инвентаре.'
-  boxParsingError: 'не удалось распарсить настройки коробки.'
+  en:
+    # - - - - - - - - - - - - - - - - - - - - -
+    # Messages that printing in chat.
+    # Can be colored with &<color code>.
+    # Color codes:
+    # minecraft.gamepedia.com/Formatting_codes
+    # You can use & instead of §
+    # - - - - - - - - - - - - - - - - - - - - -
+    itemsToDrop: 'Drop items:'
+    # - - - - - - - - - - - - - - - - - - - - -
+    # Messages prefix
+    prefix: '&3[&bRandomBox&3] &6'
+    # - - - - - - - - - - - - - - - - - - - - -
+    # Messages
+    configReloaded: 'Config reloaded.'
+    boxGiven: 'Box succesfully given.'
+    itemsDropped: 'You got: '
+    # - - - - - - - - - - - - - - - - - - - - -
+    # General errors
+    noPermissions: 'You don''t have permission to do that.'
+    boxOpenError: 'Box open error'
+    boxGiveError: 'Box give error'
+    # - - - - - - - - - - - - - - - - - - - - -
+    # Detailed errors
+    
+    # Nulls
+    itemIsNULL: 'item is null!'
+    sectionIsNULL: 'section is null!'
+    
+    # Box creation
+    noSuchBox: 'there is no box in config with this id.'
+    canNotParseBox: 'cant parse box options.'
+    notABox: 'that is not a box.'
+    convertError: 'box section name is not valid number.'
+    selectCntLessThanOne: 'drop items count less than one or not specified.'
+    noItemsSection: 'there is no section with items in config.'
+    
+    # Item creation
+    chanceLessThanOne: 'one of items hasnt probability or it less than one.'
+    invalidCommandSection: 'one of items has invalid commands section.'
+    
+    # Commands errors
+    notAPlayer: 'you are not a player!'
+    playerNotFound: 'player not found.'
+    idMustBeNumerical: 'box id must be a number.'
+    noPermissionsToOpen: 'you don''t have permisson to open that box.'
+    notEnoughSpace: 'you inventory is full!'
+  ru:
+    itemsToDrop: 'Выпадающие предметы:'
+    # - - - - - - - - - - - - - - - - - - - - -
+    # Префикс сообщений.
+    prefix: '&3[&bRandomBox&3] &6'
+    # - - - - - - - - - - - - - - - - - - - - -
+    # Сообщения от плагина.
+    configReloaded: 'Настройки перезагружены.'
+    boxGiven: 'Коробка успешно выдана.'
+    itemsDropped: 'Вы получили: '
+    # - - - - - - - - - - - - - - - - - - - - -
+    # Ошибки, выводимые в чат.
+    noPermissions: 'У вас нет прав для выполнения этой команды.'
+    boxOpenError: 'Произошла ошибка при открытии коробки'
+    boxGiveError: 'Произошла ошибка при выдаче коробки'
+    # - - - - - - - - - - - - - - - - - - - - -
+    # Подробные описания ошибок.
+    
+    # Null
+    itemIsNULL: 'item is null!'
+    sectionIsNULL: 'section is null!'
+    
+    # Создание коробки
+    noSuchBox: 'в config.yml нет коробки с таким id.'
+    canNotParseBox: 'не удалось распарсить настройки коробки.'
+    notABox: 'это не коробка.'
+    convertError: 'имя секции не является целым числом.'
+    selectCntLessThanOne: 'количество выпадающих вещей меньше 1 или отсутствует.'
+    noItemsSection: 'отсутствует секция с выпадающими вещами.'
+    
+    # Создание вещи
+    chanceLessThanOne: 'шанс выпадения одной из вещей меньше 1 или отсутствует.'
+    invalidCommandSection: 'для одной из вещей неверно задана выполняемая команда.'
+    
+    # Ошибки в выполнении команд
+    notAPlayer: 'вы не игрок! (WTF?!).'
+    playerNotFound: 'игрок не найден.'
+    idMustBeNumerical: 'идентификатор коробки должен быть числом.'
+    noPermissionsToOpen: 'у вас нет прав для открытия этой коробки.'
+    notEnoughSpace: 'недостаточно места в инвентаре.'

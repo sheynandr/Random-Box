@@ -1,23 +1,33 @@
 package saharnooby.randombox.box;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import saharnooby.randombox.RandomBox;
 import saharnooby.randombox.Utils;
+import saharnooby.randombox.box.result.BoxConstructorResult;
+import saharnooby.randombox.box.result.RewardItemConstructorResult;
 
 public class Box {
-	public static Box fromItemStack(ItemStack item) {		
-		if (item == null) return null;
+	public static BoxConstructorResult fromItemStack(ItemStack item) {
+		BoxConstructorResult result = new BoxConstructorResult();
 		
-		int intId = item.getDurability();
+		if (item == null)
+			return result.fail("itemIsNULL");
+		
+		int intId = -1;
+		
+		if (item.hasItemMeta())
+			if (item.getItemMeta().hasLore())
+				intId = Utils.getIdFromLoreLine(item.getItemMeta().getLore().get(0));
+		
+		if (intId == -1)
+			intId = item.getDurability();
 		
 		// Получаем строковый id коробки из под-id вещи
 		String id = String.valueOf(intId);
@@ -27,41 +37,43 @@ public class Box {
 		
 		// Если секция с таким id не найдена, выходим...
 		if (section == null)
-			return null;
+			return result.fail("noSuchBox");
 		
 		// Создаём коробку, которая распарсена из секции (будет эталоном)
 		ItemStack box = Utils.section2box(section);
 		if (box == null)
-			return null;
+			return result.fail("canNotParseBox");
 		
 		// Если материалы эталонной и данной коробки не совпадают, то выходим
 		if (item.getType() != box.getType())
-			return null;
+			return result.fail("notABox");
 		
 		return fromSection(section);
 	}
 	
-	public static Box fromSection(ConfigurationSection section) {
+	public static BoxConstructorResult fromSection(ConfigurationSection section) {
+		BoxConstructorResult result = new BoxConstructorResult();
+		
 		if (section == null)
-			return null;
+			return result.fail("sectionIsNULL");
 		
 		Box box = new Box();
 		
 		try {
 			box.id = Short.valueOf(section.getName());
 		} catch (Exception e) {
-			return null;
+			return result.fail("convertError");
 		};
 		
 		ItemStack item = Utils.section2box(section);
 		if (item == null)
-			return null;
+			return result.fail("canNotParseBox");
 		else
 			box.item = item;
 		
 		int itemsToSelectCount = section.getInt("itemsToSelectCount", 0);
 		if (itemsToSelectCount < 1)
-			return null;
+			return result.fail("selectCntLessThanOne");
 		else
 			box.itemsToSelectCount = itemsToSelectCount;
 		
@@ -76,28 +88,29 @@ public class Box {
 		ConfigurationSection itemsSection = section.getConfigurationSection("items");
 		if (itemsSection != null) {
 			Set<String> keys = itemsSection.getKeys(false);
+			if (keys.isEmpty())
+				return result.fail("noItemsSection");
 			
 			List<RewardItem> items = new ArrayList<RewardItem>();
 			
 			for (String key : keys) {
 				RandomBox.debugInfo("Key = " + key);
 				
-				RewardItem rewardItem = RewardItem.fromSection(itemsSection.getConfigurationSection(key));
-				if (rewardItem == null)
-					return null;
+				RewardItemConstructorResult itemResult = RewardItem.fromSection(itemsSection.getConfigurationSection(key));
+				
+				if (!itemResult.getSuccessful())
+					return result.fail(itemResult.getMessage());
 				else
-					items.add(rewardItem);			
+					items.add(itemResult.getResult());
 			}
 			
 			box.items = items;
 		} else
-			return null;
-		
-		box.item.setDurability(box.id);
+			return result.fail("noItemsSection");
 		
 		Utils.fillBoxLore(box);
 		
-		return box;
+		return result.success(null, box);
 	}
 	
 	private short id;
